@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>- Estoques e Preços</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eaeaea;
+            color: #444;
+        }
+        header {
+            background-color: #4a4e69;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        footer {
+            background-color: #4a4e69;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #fff;
+            margin: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .product-card h3 {
+            margin: 10px 0;
+            font-size: 1.3em;
+            color: #333;
+        }
+        .product-card p {
+            color: #666;
+        }
+        .product-card button {
+            background-color: #6a0572;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .product-card button:hover {
+            background-color: #9b2d91;
+            transform: scale(1.05);
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-container input, .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-container button {
+            background-color: #6a0572;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+        .form-container button:hover {
+            background-color: #9b2d91;
+        }
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        @media (max-width: 768px) {
+            .product-card {
+                width: calc(50% - 30px);
+            }
+        }
+        @media (max-width: 480px) {
+            .product-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bem-vindo à VTR</h1>
+        <nav role="navigation">
+            <a href="#" onclick="showSection('home')">Início</a>
+            <a href="#" onclick="showSection('login')">Login</a>
+            <a href="#" onclick="showSection('register')">Registrar</a>
+            <a href="#" onclick="showSection('checkout')">Carrinho</a>
+        </nav>
+    </header>
+    
+    <main id="main-content">
+        <!-- Conteúdo dinâmico será inserido aqui -->
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 VTR. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const products = [
+            { id: 1, name: 'IPHONE 12 128 GB', price: 2500, image: '' },
+            { id: 2, name: 'IPHONE 12 PRO MAX 512GB', price: 3250, image: '' },
+            { id: 3, name: 'IPHONE 13 128 GB', price: 4200, image: 'https://via.placeholder.com/200' },
+            { id: 4, name: 'IPHONE 13 PRO 256 GB', price: 4850, image: 'https://via.placeholder.com/200' },
+            { id: 5, name: 'IPHONE 13 PRO MAX 512 GB', price: 5300, image: 'https://via.placeholder.com/200' },
+            { id: 6, name: 'IPHONE 14 PRO 512GB', price: 6350, image: 'https://via.placeholder.com/200' },
+            { id: 7, name: 'IPHONE 14 PRO MAX 256GB', price: 7400, image: 'https://via.placeholder.com/200' },
+            { id: 8, name: 'IPHONE 15 PRO MAX 512GB', price: 7850, image: 'https://via.placeholder.com/200' }
+        ];
+
+        let selectedProduct = null;
+
+        function showSection(section) {
+            let content = '';
+            switch (section) {
+                case 'home':
+                    content = `
+                        <section>
+                            <h2>Produtos</h2>
+                            <div class="product-grid">
+                                ${products.map(product => `
+                                    <div class="product-card">
+                                        <img src="${product.image || 'https://via.placeholder.com/200'}" alt="${product.name}">
+                                        <h3>${product.name}</h3>
+                                        <p>Preço: R$ ${product.price.toFixed(2)}</p>
+                                        <button onclick="selectProduct(${product.id})">Selecionar</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </section>
+                    `;
+                    break;
+                case 'login':
+                    content = `
+                        <div class="form-container">
+                            <h2>Login</h2>
+                            <form id="login-form">
+                                <label for="login-email">Email:</label>
+                                <input type="email" id="login-email" name="email" required><br>
+                                <label for="login-password">Senha:</label>
+                                <input type="password" id="login-password" name="password" required><br>
+                                <button type="button" onclick="performLogin()">Login</button>
+                            </form>
+                        </div>
+                    `;
+                    break;
+                case 'register':
+                    content = `
+                        <div class="form-container">
+                            <h2>Registrar</h2>
+                            <form id="register-form">
+                                <label for="register-email">Email:</label>
+                                <input type="email" id="register-email" name="email" required><br>
+                                <label for="register-password">Senha:</label>
+                                <input type="password" id="register-password" name="password" required><br>
+                                <button type="button" onclick="performRegister()">Registrar</button>
+                            </form>
+                        </div>
+                    `;
+                    break;
+                case 'checkout':
+                    content = `
+                        <div class="form-container">
+                            <h2>Checkout</h2>
+                            <form id="checkout-form">
+                                <label for="address">Endereço:</label>
+                                <input type="text" id="address" name="address" required><br>
+                                <label for="cep">CEP:</label>
+                                <input type="text" id="cep" name="cep" required onblur="fetchCepData()"><br>
+                                <div id="address-info"></div>
+                                <label for="payment-method">Método de Pagamento:</label>
+                                <select id="payment-method" name="payment-method">
+                                    <option value="pix">PIX</option>
+                                    <option value="credit-card">Cartão de Crédito</option>
+                                </select><br>
+                                <button type="button" onclick="confirmCheckout()">Confirmar Compra</button>
+                            </form>
+                        </div>
+                    `;
+                    break;
+                case 'product-details':
+                    if (selectedProduct) {
+                        const product = products.find(p => p.id === selectedProduct);
+                        content = `
+                            <div class="form-container product-details">
+                                <h2>${product.name}</h2>
+                                <img src="${product.image}" alt="${product.name}">
+                                <p>Preço: R$ ${product.price.toFixed(2)}</p>
+                                <p>Detalhes do produto...</p>
+                                <button onclick="showSection('home')">Voltar</button>
+                            </div>
+                        `;
+                    } else {
+                        content = '<h2>Produto não encontrado.</h2>';
+                    }
+                    break;
+                default:
+                    content = '<h2>Erro: Seção não encontrada.</h2>';
+            }
+            document.getElementById('main-content').innerHTML = content;
+        }
+
+        function selectProduct(id) {
+            selectedProduct = id;
+            showSection('product-details');
+        }
+
+        function performLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            login(email, password).then(response => {
+                if (response.success) {
+                    alert('Login bem-sucedido!');
+                    showSection('home');
+                } else {
+                    alert('Falha no login. Verifique suas credenciais.');
+                }
+            }).catch(error => {
+                handleError('Erro ao tentar fazer login. Tente novamente mais tarde.');
+            });
+        }
+
+        function performRegister() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            if (!email || !password) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            register(email, password).then(response => {
+                if (response.success) {
+                    alert('Registro bem-sucedido!');
+                    showSection('home');
+                } else {
+                    alert('Falha no registro. Tente novamente.');
+                }
+            }).catch(error => {
+                handleError('Erro ao tentar registrar. Tente novamente mais tarde.');
+            });
+        }
+
+        function confirmCheckout() {
+            const address = document.getElementById('address').value;
+            const cep = document.getElementById('cep').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            if (!address || !cep) {
+                alert('Por favor, preencha o endereço e o CEP.');
+                return;
+            }
+
+            const confirmationContent = `
+                <div class="confirmation-dialog">
+                    <p>Confirme os dados da sua compra:</p>
+                    <p><strong>Endereço:</strong> ${address}</p>
+                    <p><strong>CEP:</strong> ${cep}</p>
+                    <p><strong>Método de Pagamento:</strong> ${paymentMethod}</p>
+                    <button class="confirm" onclick="performCheckout()">Confirmar</button>
+                    <button class="cancel" onclick="showSection('checkout')">Cancelar</button>
+                </div>
+            `;
+
+            document.getElementById('main-content').innerHTML = confirmationContent;
+        }
+
+        function performCheckout() {
+            const address = document.getElementById('address').value;
+            const cep = document.getElementById('cep').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            if (!address || !cep) {
+                alert('Por favor, preencha o endereço e o CEP.');
+                return;
+            }
+
+            calculateShipping(address, cep).then(response => {
+                alert(`Compra realizada com sucesso usando ${paymentMethod}`);
+                showSection('home');
+            }).catch(error => {
+                handleError('Erro ao calcular o frete. Tente novamente.');
+            });
+        }
+
+        function fetchCepData() {
+            const cep = document.getElementById('cep').value;
+            if (cep.length === 8) {
+                fetchAddressInfo(cep).then(data => {
+                    document.getElementById('address-info').innerHTML = `
+                        <p>Cidade: ${data.localidade}</p>
+                        <p>Estado: ${data.uf}</p>
+                    `;
+                }).catch(error => {
+                    document.getElementById('address-info').innerHTML = '<p>CEP inválido.</p>';
+                });
+            }
+        }
+
+        function handleError(errorMessage) {
+            alert(errorMessage);
+        }
+
+        // Load home section by default
+        showSection('home');
+    </script>
+</body>
+</html>
